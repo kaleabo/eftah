@@ -30,12 +30,13 @@ declare module 'next-auth/jwt' {
 }
 
 export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
   adapter: PrismaAdapter(prisma) as any,
   session: {
     strategy: "jwt",
   },
   pages: {
-    signIn: "/login", // Updated to match actual login page path
+    signIn: "/sign-in",
   },
   providers: [
     CredentialsProvider({
@@ -45,37 +46,42 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials): Promise<User | null> {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error('Invalid credentials')
-        }
-
-        const user = await prisma.user.findUnique({
-          where: {
-            email: credentials.email
+        try {
+          if (!credentials?.email || !credentials?.password) {
+            throw new Error('Invalid credentials')
           }
-        })
 
-        if (!user) {
+          const user = await prisma.user.findUnique({
+            where: {
+              email: credentials.email
+            }
+          })
+
+          if (!user) {
+            return null
+          }
+
+          const passwordsMatch = await bcrypt.compare(
+            credentials.password,
+            user.password! 
+          )
+
+          if (!passwordsMatch) {
+            return null
+          }
+
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+            emailVerified: user.emailVerified,
+            image: user.image,
+            password: user.password
+          }
+        } catch (error) {
+          console.error('Auth error:', error)
           return null
-        }
-
-        const passwordsMatch = await bcrypt.compare(
-          credentials.password,
-          user.password!
-        )
-
-        if (!passwordsMatch) {
-          return null
-        }
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-          emailVerified: user.emailVerified,
-          image: user.image,
-          password: user.password
         }
       }
     })
@@ -88,29 +94,32 @@ export const authOptions: NextAuthOptions = {
         session.user.email = token.email || null
         session.user.role = token.role
       }
-
       return session
     },
     async jwt({ token, user }) {
-      const dbUser = await prisma.user.findFirst({
-        where: {
-          email: token.email!,
-        },
-      })
+      try {
+        const dbUser = await prisma.user.findFirst({
+          where: {
+            email: token.email!,
+          },
+        })
 
-      if (!dbUser) {
-        if (user) {
-          token.id = user?.id
-          token.role = user?.role // Added role assignment for new user
+        if (!dbUser) {
+          if (user) {
+            token.id = user?.id
+          }
+          return token
         }
-        return token
-      }
 
-      return {
-        id: dbUser.id,
-        name: dbUser.name,
-        email: dbUser.email,
-        role: dbUser.role,
+        return {
+          id: dbUser.id,
+          name: dbUser.name,
+          email: dbUser.email,
+          role: dbUser.role,
+        }
+      } catch (error) {
+        console.error('JWT error:', error)
+        return token
       }
     }
   }
