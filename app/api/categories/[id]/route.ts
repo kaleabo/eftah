@@ -46,7 +46,7 @@ export async function DELETE(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } } & { json: any }
+  { params }: { params: { id: string } }
 ) {
   try {
     const id = parseInt(params.id)
