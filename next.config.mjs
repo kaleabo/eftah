@@ -3,9 +3,6 @@ const nextConfig = {
   images: {
     domains: ["media.istockphoto.com", "images.unsplash.com", "placehold.co", "plus.unsplash.com", "localhost"],
   },
-  experimental: {
-    missingSuspenseWithCSRBailout: false,
-  },
   typescript: {
     ignoreBuildErrors: true,
   },

@@ -1,5 +1,6 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -24,9 +25,9 @@ const formSchema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters')
 })
 
-export default function LoginPage() {
-  const router = useRouter()
+function LoginForm() {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
 
   const from = searchParams.get('from') || '/admin'
@@ -135,5 +136,13 @@ export default function LoginPage() {
         </Form>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginForm />
+    </Suspense>
   )
 }
