@@ -1,62 +1,38 @@
-import { writeFile } from 'fs/promises'
-import { NextRequest, NextResponse } from 'next/server'
-import { v4 as uuidv4 } from 'uuid'
-import sharp from 'sharp'
-import path from 'path'
+import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { saveFile } from "@/lib/upload-service";
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const formData = await request.formData()
-    const file = formData.get('file') as File
+    const session = await getServerSession(authOptions);
     
+    if (!session || session.user.role !== 'ADMIN') {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const formData = await request.formData();
+    const file = formData.get("file") as File;
+
     if (!file) {
       return NextResponse.json(
-        { error: 'No file uploaded' },
+        { error: "No file provided" },
         { status: 400 }
-      )
+      );
     }
 
-    // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
-    if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json(
-        { error: 'Invalid file type' },
-        { status: 400 }
-      )
-    }
-
-    // Convert to buffer
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-
-    // Generate unique filename
-    const uniqueId = uuidv4()
-    const extension = 'webp'
-    const filename = `${uniqueId}.${extension}`
-
-    // Process image with sharp
-    const optimizedBuffer = await sharp(buffer)
-      .resize(800, 800, {
-        fit: 'inside',
-        withoutEnlargement: true
-      })
-      .webp({ quality: 80 })
-      .toBuffer()
-
-    // Save to public/uploads
-    const uploadDir = path.join(process.cwd(), 'public/uploads')
-    await writeFile(path.join(uploadDir, filename), optimizedBuffer)
-
-    // Return the URL
-    const imageUrl = `/uploads/${filename}`
+    const fileUrl = await saveFile(file);
     
-    return NextResponse.json({ url: imageUrl })
+    return NextResponse.json({ url: fileUrl });
   } catch (error) {
-    console.error('Upload error:', error)
+    console.error("Upload error:", error);
     return NextResponse.json(
-      { error: 'Upload failed' },
+      { error: error instanceof Error ? error.message : "Upload failed" },
       { status: 500 }
-    )
+    );
   }
 }
 
