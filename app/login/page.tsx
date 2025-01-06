@@ -26,12 +26,10 @@ const formSchema = z.object({
 })
 
 function LoginForm() {
-  const searchParams = useSearchParams()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [isLoading, setIsLoading] = useState(false)
-
-  const from = searchParams.get('from') || '/admin'
-
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -41,8 +39,8 @@ function LoginForm() {
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setIsLoading(true)
     try {
+      setIsLoading(true)
       const result = await signIn('credentials', {
         email: values.email,
         password: values.password,
@@ -50,90 +48,99 @@ function LoginForm() {
       })
 
       if (result?.error) {
-        toast.error('Invalid credentials')
+        toast.error('Invalid email or password')
         return
       }
 
-      router.push(from)
-      router.refresh()
+      if (result?.ok) {
+        toast.success('Login successful')
+        // Get the callback URL from searchParams or default to /admin
+        const callbackUrl = searchParams?.get('from') || '/admin'
+        router.push(callbackUrl)
+        router.refresh()
+      }
     } catch (error) {
-      toast.error('Something went wrong')
+      toast.error('An error occurred during login')
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-      <div className="w-full max-w-md p-8 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800">
-        <div className="space-y-2 text-center mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
-            Welcome Back
-          </h1>
-          <p className="text-gray-500 dark:text-gray-400">
-            Sign in to access your admin dashboard
-          </p>
+    <div className="flex min-h-screen flex-col items-center justify-center py-12 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+          Sign in to your account
+        </h2>
+      </div>
+
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white px-4 py-8 shadow sm:rounded-lg sm:px-10">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                        <Input
+                          {...field}
+                          placeholder="Enter your email"
+                          type="email"
+                          disabled={isLoading}
+                          className="pl-10"
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                        <Input
+                          {...field}
+                          placeholder="Enter your password"
+                          type="password"
+                          disabled={isLoading}
+                          className="pl-10"
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  'Sign in'
+                )}
+              </Button>
+            </form>
+          </Form>
         </div>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2">
-                    <Mail className="h-4 w-4" />
-                    Email
-                  </FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="email"
-                      placeholder="admin@example.com"
-                      className="bg-white/50 dark:bg-gray-800/50"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2">
-                    <Lock className="h-4 w-4" />
-                    Password
-                  </FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="password"
-                      placeholder="••••••••"
-                      className="bg-white/50 dark:bg-gray-800/50"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button 
-              type="submit" 
-              className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-medium py-2.5"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
-                </>
-              ) : (
-                'Sign in'
-              )}
-            </Button>
-          </form>
-        </Form>
       </div>
     </div>
   )
