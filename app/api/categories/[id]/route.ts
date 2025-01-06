@@ -1,32 +1,21 @@
-import { prisma } from "@/lib/prisma"
+import { prisma as db } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
 
-interface RouteContext {
+type RouteParams = {
   params: {
     id: string
   }
 }
 
 export async function PUT(
-  req: NextRequest,
-  { params }: RouteContext
+  request: NextRequest,
+  { params }: RouteParams
 ) {
   try {
-    const session = await getServerSession(authOptions)
-    
-    if (!session || session.user.role !== 'ADMIN') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
-
     const { id } = params
-    const body = await req.json()
+    const body = await request.json()
 
-    const category = await prisma.category.update({
+    const category = await db.category.update({
       where: {
         id: parseInt(id),
       },
@@ -37,7 +26,6 @@ export async function PUT(
 
     return NextResponse.json(category)
   } catch (error) {
-    console.error('Error updating category:', error)
     return NextResponse.json(
       { error: "Failed to update category" },
       { status: 500 }
@@ -46,22 +34,13 @@ export async function PUT(
 }
 
 export async function DELETE(
-  req: NextRequest,
-  { params }: RouteContext
+  request: NextRequest,
+  { params }: RouteParams
 ) {
   try {
-    const session = await getServerSession(authOptions)
-    
-    if (!session || session.user.role !== 'ADMIN') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
-
     const { id } = params
 
-    await prisma.category.delete({
+    await db.category.delete({
       where: {
         id: parseInt(id),
       },
@@ -69,7 +48,6 @@ export async function DELETE(
 
     return NextResponse.json({ message: "Category deleted successfully" })
   } catch (error) {
-    console.error('Error deleting category:', error)
     return NextResponse.json(
       { error: "Failed to delete category" },
       { status: 500 }
