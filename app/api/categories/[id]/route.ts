@@ -1,16 +1,16 @@
-import { prisma } from '@/lib/prisma'
-import { NextResponse } from 'next/server'
+import { prisma } from "@/lib/prisma"
+import { NextRequest, NextResponse } from "next/server"
 
 export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  context: { params: { id: string } }
 ) {
   try {
-    const id = parseInt(params.id)
+    const { id } = context.params
     
     // Check if category exists
     const category = await prisma.category.findUnique({
-      where: { id },
+      where: { id: parseInt(id) },
       include: { menuItems: true }
     })
 
@@ -31,7 +31,7 @@ export async function DELETE(
 
     // Delete the category
     await prisma.category.delete({
-      where: { id }
+      where: { id: parseInt(id) }
     })
 
     return NextResponse.json({ success: true })
@@ -44,29 +44,30 @@ export async function DELETE(
   }
 }
 
+
 export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const id = parseInt(params.id)
-    const json = await request.json()
-
-    const category = await prisma.category.update({
-      where: { id },
-      data: {
-        name: json.name,
-        slug: json.slug,
-        description: json.description
-      }
-    })
-
-    return NextResponse.json(category)
-  } catch (error) {
-    console.error('Failed to update category:', error)
-    return NextResponse.json(
-      { error: 'Failed to update category' },
-      { status: 500 }
-    )
+    request: NextRequest,
+    context: { params: { id: string } }
+  ) {
+    try {
+      const { id } = context.params
+      const body = await request.json()
+  
+      const category = await prisma.category.update({
+        where: { id: parseInt(id) },
+        data: {
+          name: body.name,
+          slug: body.slug,
+          description: body.description
+        }
+      })
+  
+      return NextResponse.json(category)
+    } catch (error) {
+      console.error('Failed to update category:', error)
+      return NextResponse.json(
+        { error: 'Failed to update category' },
+        { status: 500 }
+      )
+    }
   }
-}
