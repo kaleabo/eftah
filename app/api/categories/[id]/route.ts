@@ -44,30 +44,41 @@ export async function DELETE(
   }
 }
 
-
 export async function PUT(
-    request: Request,
-    { params }: { params: { id: string } }
-  ) {
-    try {
-      const id = parseInt(params.id)
-      const json = await request.json()
-  
-      const category = await prisma.category.update({
-        where: { id },
-        data: {
-          name: json.name,
-          slug: json.slug,
-          description: json.description
-        }
-      })
-  
-      return NextResponse.json(category)
-    } catch (error) {
-      console.error('Failed to update category:', error)
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const id = parseInt(params.id)
+    const json = await request.json()
+
+    // Check if category exists
+    const existingCategory = await prisma.category.findUnique({
+      where: { id }
+    })
+
+    if (!existingCategory) {
       return NextResponse.json(
-        { error: 'Failed to update category' },
-        { status: 500 }
+        { error: 'Category not found' },
+        { status: 404 }
       )
     }
+
+    const category = await prisma.category.update({
+      where: { id },
+      data: {
+        name: json.name,
+        slug: json.slug,
+        description: json.description
+      }
+    })
+
+    return NextResponse.json(category)
+  } catch (error) {
+    console.error('Failed to update category:', error)
+    return NextResponse.json(
+      { error: 'Failed to update category' },
+      { status: 500 }
+    )
   }
+}

@@ -100,13 +100,20 @@ export function CategoryDialog({ open, onOpenChange, category, onSuccess }: Cate
         body: JSON.stringify(data)
       })
 
-      if (!res.ok) throw new Error('Failed to save category')
+      if (!res.ok) {
+        const error = await res.json()
+        throw new Error(error.error || 'Failed to save category')
+      }
 
       toast.success(`Category ${category ? 'updated' : 'created'} successfully`)
       onSuccess()
-      form.reset()
+      onOpenChange(false)
     } catch (error) {
-      toast.error(`Failed to ${category ? 'update' : 'create'} category`)
+      if (error instanceof Error) {
+        toast.error(error.message)
+      } else {
+        toast.error(`Failed to ${category ? 'update' : 'create'} category`)
+      }
     } finally {
       setIsSubmitting(false)
     }

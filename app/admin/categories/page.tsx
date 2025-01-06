@@ -34,7 +34,11 @@ export default function CategoriesPage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { data: categories, refetch, isLoading } = useQuery<Category[]>({
+  const {
+    data: categories,
+    refetch,
+    isLoading,
+  } = useQuery<Category[]>({
     queryKey: ["categories"],
     queryFn: async () => {
       const res = await fetch("/api/categories");
@@ -48,7 +52,7 @@ export default function CategoriesPage() {
       setIsDeleting(true);
       const res = await fetch(`/api/categories/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete category");
-      
+
       toast.success("Category deleted successfully");
       refetch();
       setIsDeleteDialogOpen(false);
@@ -59,9 +63,10 @@ export default function CategoriesPage() {
     }
   };
 
-  const filteredCategories = categories?.filter(category =>
-    category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    category.description?.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredCategories = categories?.filter(
+    (category) =>
+      category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      category.description?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -72,7 +77,7 @@ export default function CategoriesPage() {
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
             Categories
           </h1>
-          <Button 
+          <Button
             onClick={() => {
               setSelectedCategory(null);
               setIsDialogOpen(true);
@@ -97,67 +102,73 @@ export default function CategoriesPage() {
 
         {/* Mobile Card View */}
         <div className="block md:hidden space-y-4">
-          {isLoading ? (
-            Array.from({ length: 3 }).map((_, index) => (
-              <div 
-                key={index}
-                className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 animate-pulse"
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <div className="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                  <div className="flex gap-2">
-                    <div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                    <div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          {isLoading
+            ? Array.from({ length: 3 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 animate-pulse"
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                    <div className="flex gap-2">
+                      <div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                      <div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                    <div className="h-4 w-48 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                    <div className="h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded"></div>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                  <div className="h-4 w-48 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                  <div className="h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                </div>
-              </div>
-            ))
-          ) : (
-            filteredCategories?.map((category) => (
-              <div 
-                key={category.id}
-                className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700"
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-semibold text-lg">{category.name}</h3>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedCategory(category);
-                        setIsDialogOpen(true);
-                      }}
-                      className="hover:bg-gray-100 dark:hover:bg-gray-700"
-                    >
-                      <Pencil className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedCategory(category);
-                        setIsDeleteDialogOpen(true);
-                      }}
-                      className="hover:bg-gray-100 dark:hover:bg-gray-700"
-                    >
-                      <Trash2 className="w-4 h-4 text-red-600 dark:text-red-400" />
-                    </Button>
+              ))
+            : filteredCategories?.map((category) => (
+                <div
+                  key={category.id}
+                  className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700"
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-semibold text-lg">{category.name}</h3>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedCategory(category);
+                          setIsDialogOpen(true);
+                        }}
+                        className="hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        <Pencil className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedCategory(category);
+                          setIsDeleteDialogOpen(true);
+                        }}
+                        className="hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-600 dark:text-red-400" />
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="space-y-1 text-sm text-gray-600 dark:text-gray-300">
+                    <p>
+                      <span className="font-medium">Slug:</span> {category.slug}
+                    </p>
+                    <p>
+                      <span className="font-medium">Description:</span>{" "}
+                      {category.description || "-"}
+                    </p>
+                    <p>
+                      <span className="font-medium">Menu Items:</span>{" "}
+                      {category._count?.menuItems || 0}
+                    </p>
                   </div>
                 </div>
-                <div className="space-y-1 text-sm text-gray-600 dark:text-gray-300">
-                  <p><span className="font-medium">Slug:</span> {category.slug}</p>
-                  <p><span className="font-medium">Description:</span> {category.description || "-"}</p>
-                  <p><span className="font-medium">Menu Items:</span> {category._count?.menuItems || 0}</p>
-                </div>
-              </div>
-            ))
-          )}
+              ))}
         </div>
 
         {/* Desktop Table View */}
@@ -170,70 +181,78 @@ export default function CategoriesPage() {
                   <TableHead className="font-semibold">Slug</TableHead>
                   <TableHead className="font-semibold">Description</TableHead>
                   <TableHead className="font-semibold">Menu Items</TableHead>
-                  <TableHead className="text-right font-semibold">Actions</TableHead>
+                  <TableHead className="text-right font-semibold">
+                    Actions
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {isLoading ? (
-                  Array.from({ length: 5 }).map((_, index) => (
-                    <TableRow key={index}>
-                      <TableCell>
-                        <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="h-4 w-48 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="h-4 w-12 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-                          <div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  filteredCategories?.map((category) => (
-                    <TableRow 
-                      key={category.id}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                    >
-                      <TableCell className="font-medium">{category.name}</TableCell>
-                      <TableCell className="text-gray-600 dark:text-gray-300">{category.slug}</TableCell>
-                      <TableCell className="text-gray-600 dark:text-gray-300">{category.description || "-"}</TableCell>
-                      <TableCell className="text-gray-600 dark:text-gray-300">{category._count?.menuItems || 0}</TableCell>
-                      <TableCell className="text-right space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => {
-                            setSelectedCategory(category);
-                            setIsDialogOpen(true);
-                          }}
-                          className="hover:bg-gray-100 dark:hover:bg-gray-700"
-                        >
-                          <Pencil className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => {
-                            setSelectedCategory(category);
-                            setIsDeleteDialogOpen(true);
-                          }}
-                          className="hover:bg-gray-100 dark:hover:bg-gray-700"
-                        >
-                          <Trash2 className="w-4 h-4 text-red-600 dark:text-red-400" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
+                {isLoading
+                  ? Array.from({ length: 5 }).map((_, index) => (
+                      <TableRow key={index}>
+                        <TableCell>
+                          <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="h-4 w-48 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="h-4 w-12 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                            <div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  : filteredCategories?.map((category) => (
+                      <TableRow
+                        key={category.id}
+                        className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                      >
+                        <TableCell className="font-medium">
+                          {category.name}
+                        </TableCell>
+                        <TableCell className="text-gray-600 dark:text-gray-300">
+                          {category.slug}
+                        </TableCell>
+                        <TableCell className="text-gray-600 dark:text-gray-300">
+                          {category.description || "-"}
+                        </TableCell>
+                        <TableCell className="text-gray-600 dark:text-gray-300">
+                          {category._count?.menuItems || 0}
+                        </TableCell>
+                        <TableCell className="text-right space-x-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              setSelectedCategory(category);
+                              setIsDialogOpen(true);
+                            }}
+                            className="hover:bg-gray-100 dark:hover:bg-gray-700"
+                          >
+                            <Pencil className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              setSelectedCategory(category);
+                              setIsDeleteDialogOpen(true);
+                            }}
+                            className="hover:bg-gray-100 dark:hover:bg-gray-700"
+                          >
+                            <Trash2 className="w-4 h-4 text-red-600 dark:text-red-400" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
               </TableBody>
             </Table>
           </div>
