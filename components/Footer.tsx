@@ -86,8 +86,9 @@ const Footer = () => {
           </div>
         </div>
       )}
-      <footer className="border-t bg-white">
-        <div className="max-w-6xl mx-auto px-5 py-10">
+      <footer className="border-t bg-gradient-to-br from-white via-red-50 to-white">
+        <div className="relative max-w-6xl mx-auto px-5 py-10">
+          <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-24 h-24 bg-red-50 rounded-full blur-2xl opacity-70"></div>
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-3">
               <Image

@@ -109,9 +109,9 @@ const Header = ({ contactInfo }: { contactInfo: ContactInfo | null }) => {
         <AnimatePresence>
           {isMenuOpen && (
             <motion.nav
-              initial={{ opacity: 0, y: -10 }}
+              initial={{ opacity: 1, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+              exit={{ opacity: 1, y: -10 }}
               transition={{ duration: 0.2 }}
               className="md:hidden mt-4 pb-4"
             >

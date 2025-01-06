@@ -75,14 +75,18 @@ const ContactInformation = ({ contactInfo }: { contactInfo: ContactInfo }) => {
   return (
     <section className="py-24 px-6 bg-white" id="contact">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center space-y-4 mb-16">
-          <h2 className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-red-400">
+        <div className="relative flex flex-col items-center text-center mb-16">
+          <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-24 h-24 bg-red-50 rounded-full blur-2xl opacity-70"></div>
+          <span className="relative inline-block px-4 py-2 bg-red-50 text-red-500 text-sm font-medium rounded-full mb-4">
+            Get in Touch
+          </span>
+          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
             Contact Us
           </h2>
-          <p className="text-gray-600 text-lg font-light tracking-wide">
-            Get in touch with us for any questions or reservations
+          <div className="mt-6 w-20 h-1.5 bg-gradient-to-r from-red-500 to-red-400 rounded-full"></div>
+          <p className="mt-6 text-gray-600 max-w-2xl mx-auto text-lg">
+            Have questions or want to make a reservation? We're here to help you with anything you need
           </p>
-          <div className="w-24 h-1 bg-red-500 mx-auto rounded-full"></div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">

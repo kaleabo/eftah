@@ -15,13 +15,25 @@ export default async function MenuPage() {
   const contactInfo = await prisma.contactInformation.findFirst();
   const menuItems = await prisma.menuItem.findMany({
     select: {
-      category: true,
-      price: true,
-      image: true,
       id: true,
       name: true,
-      isPopular: true,
+      description: true,
+      price: true,
+      image: true,
       isAvailable: true,
+      isPopular: true,
+      createdAt: true,
+      updatedAt: true,
+      category: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          description: true,
+          createdAt: true,
+          updatedAt: true
+        }
+      }
     },
     orderBy: {
       createdAt: "desc",
@@ -45,7 +57,16 @@ export default async function MenuPage() {
           </p>
         </div>
         <div className="max-w-6xl mx-auto px-5 md:px-0">
-          <Menu menuItems={menuItems} />
+          <Menu menuItems={menuItems.map(item => ({
+            ...item,
+            id: String(item.id),
+            description: item.description ?? "",
+            category: {
+              ...item.category,
+              id: String(item.category.id)
+            },
+            slug: item.category.slug
+          }))} />
         </div>
       </div>
       <Footer />

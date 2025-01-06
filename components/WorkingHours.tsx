@@ -24,7 +24,7 @@ const WorkingHours = () => {
   });
 
   return (
-    <section className="py-24 px-6 bg-gradient-to-br from-white via-gray-50 to-white" id="hours">
+    <section className="py-24 border-b border-gray-200 px-6 bg-gradient-to-br from-white via-gray-50 to-white" id="hours">
       <div className="max-w-6xl mx-auto">
         <div className="text-center space-y-4 mb-16">
           <span className="inline-block px-4 py-2 bg-red-50 text-red-500 text-sm font-medium rounded-full">
