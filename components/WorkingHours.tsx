@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Clock, Clock3 } from "lucide-react";
+import { Clock, Clock3, Loader2 } from "lucide-react";
 
 const daysOfWeek = [
   "monday",
@@ -13,8 +13,16 @@ const daysOfWeek = [
   "sunday",
 ] as const;
 
+function toEthiopianTime(time: string): string {
+  const [hour, minute] = time.split(':').map(Number)
+  const ethiopianHour = (hour - 6 + 24) % 24
+  const period = ethiopianHour >= 12 ? 'PM' : 'AM'
+  const displayHour = ethiopianHour > 12 ? ethiopianHour - 12 : ethiopianHour
+  return `${displayHour || 12}:${minute.toString().padStart(2, '0')} ${period}`
+}
+
 const WorkingHours = () => {
-  const { data: hours } = useQuery({
+  const { data: hours, isLoading } = useQuery({
     queryKey: ["business-hours"],
     queryFn: async () => {
       const res = await fetch("/api/business-hours");
@@ -22,6 +30,34 @@ const WorkingHours = () => {
       return res.json();
     },
   });
+
+  if (isLoading) {
+    return (
+      <section className="py-24 border-b border-gray-200 px-6 bg-gradient-to-br from-white via-gray-50 to-white" id="hours">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center space-y-4 mb-16">
+            <div className="h-10 w-32 mx-auto bg-red-50 animate-pulse rounded-full" />
+            <div className="h-12 w-64 mx-auto bg-gray-100 animate-pulse rounded-lg" />
+            <div className="h-20 w-full max-w-2xl mx-auto bg-gray-50 animate-pulse rounded-lg" />
+          </div>
+          
+          <div className="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[...Array(7)].map((_, i) => (
+              <div key={i} className="flex items-center justify-between p-6 rounded-xl bg-white border border-gray-100">
+                <div className="flex items-center gap-4">
+                  <div className="w-6 h-6 rounded-full bg-gray-100 animate-pulse" />
+                  <div className="space-y-2">
+                    <div className="h-4 w-20 bg-gray-100 animate-pulse rounded" />
+                  </div>
+                </div>
+                <div className="h-4 w-32 bg-gray-100 animate-pulse rounded" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-24 border-b border-gray-200 px-6 bg-gradient-to-br from-white via-gray-50 to-white" id="hours">
@@ -74,7 +110,7 @@ const WorkingHours = () => {
                 }`}>
                   {dayHours?.isClosed
                     ? "Closed"
-                    : `${dayHours?.open || "00:00"} - ${dayHours?.close || "00:00"}`}
+                    : `${toEthiopianTime(dayHours?.open || "00:00")} - ${toEthiopianTime(dayHours?.close || "00:00")}`}
                 </span>
               </div>
             );
