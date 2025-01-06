@@ -1,46 +1,73 @@
-import { prisma as db } from "@/lib/prisma"
-import { NextResponse } from "next/server"
+import { prisma } from '@/lib/prisma'
+import { NextResponse } from 'next/server'
 
-export async function PUT(request: Request) {
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   try {
-    // Get id from URL
-    const id = request.url.split('/').pop()
-    const body = await request.json()
-
-    const category = await db.category.update({
-      where: {
-        id: parseInt(id!),
-      },
-      data: {
-        ...body,
-      },
+    const id = parseInt(params.id)
+    
+    // Check if category exists
+    const category = await prisma.category.findUnique({
+      where: { id },
+      include: { menuItems: true }
     })
 
-    return NextResponse.json(category)
+    if (!category) {
+      return NextResponse.json(
+        { error: 'Category not found' },
+        { status: 404 }
+      )
+    }
+
+    // Check if category has menu items
+    if (category.menuItems.length > 0) {
+      return NextResponse.json(
+        { error: 'Cannot delete category with menu items' },
+        { status: 400 }
+      )
+    }
+
+    // Delete the category
+    await prisma.category.delete({
+      where: { id }
+    })
+
+    return NextResponse.json({ success: true })
   } catch (error) {
+    console.error('Failed to delete category:', error)
     return NextResponse.json(
-      { error: "Failed to update category" },
+      { error: 'Failed to delete category' },
       { status: 500 }
     )
   }
 }
 
-export async function DELETE(request: Request) {
-  try {
-    // Get id from URL 
-    const id = request.url.split('/').pop()
 
-    await db.category.delete({
-      where: {
-        id: parseInt(id!),
-      },
-    })
-
-    return NextResponse.json({ message: "Category deleted successfully" })
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Failed to delete category" },
-      { status: 500 }
-    )
+export async function PUT(
+    request: Request,
+    { params }: { params: { id: string } }
+  ) {
+    try {
+      const id = parseInt(params.id)
+      const json = await request.json()
+  
+      const category = await prisma.category.update({
+        where: { id },
+        data: {
+          name: json.name,
+          slug: json.slug,
+          description: json.description
+        }
+      })
+  
+      return NextResponse.json(category)
+    } catch (error) {
+      console.error('Failed to update category:', error)
+      return NextResponse.json(
+        { error: 'Failed to update category' },
+        { status: 500 }
+      )
+    }
   }
-}
