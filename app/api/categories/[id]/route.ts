@@ -28,24 +28,24 @@ import { NextRequest, NextResponse } from "next/server"
 //   }
 // }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const { id } = params
+// export async function DELETE(
+//   request: NextRequest,
+//   { params }: { params: { id: string } }
+// ) {
+//   try {
+//     const { id } = params
 
-    await db.category.delete({
-      where: {
-        id: parseInt(id),
-      },
-    })
+//     await db.category.delete({
+//       where: {
+//         id: parseInt(id),
+//       },
+//     })
 
-    return NextResponse.json({ message: "Category deleted successfully" })
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Failed to delete category" },
-      { status: 500 }
-    )
-  }
-}
+//     return NextResponse.json({ message: "Category deleted successfully" })
+//   } catch (error) {
+//     return NextResponse.json(
+//       { error: "Failed to delete category" },
+//       { status: 500 }
+//     )
+//   }
+// }
