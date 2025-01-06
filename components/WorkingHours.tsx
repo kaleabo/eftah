@@ -34,7 +34,7 @@ const WorkingHours = () => {
             Business Hours
           </h2>
           <p className="text-gray-600 text-lg font-light tracking-wide max-w-2xl mx-auto">
-            We're here to serve you during these hours. Come visit us or place your order!
+            We&apos;re here to serve you during these hours. Come visit us or place your order!
           </p>
         </div>
 

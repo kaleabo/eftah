@@ -132,7 +132,7 @@ export default function SocialLinksSettings() {
         <CardHeader>
           <CardTitle>Social Media Links</CardTitle>
           <CardDescription>
-            Manage your restaurant's social media presence
+            Manage your restaurant&apos;s social media presence
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -154,7 +154,7 @@ export default function SocialLinksSettings() {
                       />
                     </FormControl>
                     <FormDescription>
-                      Your restaurant's Facebook page URL
+                      Your restaurant&apos;s Facebook page URL
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -177,7 +177,7 @@ export default function SocialLinksSettings() {
                       />
                     </FormControl>
                     <FormDescription>
-                      Your restaurant's Twitter profile URL
+                      Your restaurant&apos;s Twitter profile URL
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -200,7 +200,7 @@ export default function SocialLinksSettings() {
                       />
                     </FormControl>
                     <FormDescription>
-                      Your restaurant's Instagram profile URL
+                      Your restaurant&apos;s Instagram profile URL
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -223,7 +223,7 @@ export default function SocialLinksSettings() {
                       />
                     </FormControl>
                     <FormDescription>
-                      Your restaurant's Telegram channel URL
+                      Your restaurant&apos;s Telegram channel URL
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -246,7 +246,7 @@ export default function SocialLinksSettings() {
                       />
                     </FormControl>
                     <FormDescription>
-                      Your restaurant's TikTok profile URL
+                      Your restaurant&apos;s TikTok profile URL
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

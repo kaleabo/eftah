@@ -101,7 +101,7 @@ const Menu = ({ menuItems }: MenuProps) => {
     }
 
     return filtered;
-  }, [menuItems, selectedCategory, selectedPrice, searchQuery, sortBy]);
+  }, [menuItems, selectedCategory, selectedPrice, searchQuery, sortBy, priceRanges]);
 
   const handleItemClick = useCallback(
     (item: MenuItem) => {

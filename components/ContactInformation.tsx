@@ -60,7 +60,7 @@ const ContactInformation = ({ contactInfo }: { contactInfo: ContactInfo }) => {
       });
 
       if (response.ok) {
-        toast.success("We'll get back to you as soon as possible.");
+        toast.success("We&apos;ll get back to you as soon as possible.");
         reset();
       } else {
         throw new Error("Failed to send message");
@@ -85,7 +85,7 @@ const ContactInformation = ({ contactInfo }: { contactInfo: ContactInfo }) => {
           </h2>
           <div className="mt-6 w-20 h-1.5 bg-gradient-to-r from-red-500 to-red-400 rounded-full"></div>
           <p className="mt-6 text-gray-600 max-w-2xl mx-auto text-lg">
-            Have questions or want to make a reservation? We're here to help you with anything you need
+            Have questions or want to make a reservation? We&apos;re here to help you with anything you need
           </p>
         </div>
 
