@@ -30,12 +30,12 @@ declare module 'next-auth/jwt' {
 }
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma) as any, // Type assertion to fix adapter compatibility
+  adapter: PrismaAdapter(prisma) as any,
   session: {
     strategy: "jwt",
   },
   pages: {
-    signIn: "/sign-in", 
+    signIn: "/login", // Updated to match actual login page path
   },
   providers: [
     CredentialsProvider({
@@ -61,7 +61,7 @@ export const authOptions: NextAuthOptions = {
 
         const passwordsMatch = await bcrypt.compare(
           credentials.password,
-          user.password! // Changed from hashedPassword to password based on schema
+          user.password!
         )
 
         if (!passwordsMatch) {
@@ -101,6 +101,7 @@ export const authOptions: NextAuthOptions = {
       if (!dbUser) {
         if (user) {
           token.id = user?.id
+          token.role = user?.role // Added role assignment for new user
         }
         return token
       }
