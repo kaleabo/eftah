@@ -4,10 +4,10 @@ import { NextRequest, NextResponse } from "next/server"
 // Use the correct type for dynamic route parameters
 export async function PUT(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = context.params
+    const { id } = params
     const body = await request.json()
 
     const category = await db.category.update({
@@ -30,10 +30,10 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = context.params
+    const { id } = params
 
     await db.category.delete({
       where: {
