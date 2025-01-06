@@ -1,15 +1,10 @@
 import { prisma as db } from "@/lib/prisma"
 import { NextRequest, NextResponse } from "next/server"
 
-type RouteParams = {
-  params: {
-    id: string
-  }
-}
-
+// Use the correct type for dynamic route parameters
 export async function PUT(
   request: NextRequest,
-  { params }: RouteParams
+  { params }: { params: { id: string } }
 ) {
   try {
     const { id } = params
@@ -35,7 +30,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: RouteParams
+  { params }: { params: { id: string } }
 ) {
   try {
     const { id } = params
