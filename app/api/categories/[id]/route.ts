@@ -1,51 +1,46 @@
 import { prisma as db } from "@/lib/prisma"
-import { NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
 
-// Use the correct type for dynamic route parameters
-// export async function PUT(
-//   request: NextRequest,
-//   { params }: { params: { id: string } }
-// ) {
-//   try {
-//     const { id } = params
-//     const body = await request.json()
+export async function PUT(request: Request) {
+  try {
+    // Get id from URL
+    const id = request.url.split('/').pop()
+    const body = await request.json()
 
-//     const category = await db.category.update({
-//       where: {
-//         id: parseInt(id),
-//       },
-//       data: {
-//         ...body,
-//       },
-//     })
+    const category = await db.category.update({
+      where: {
+        id: parseInt(id!),
+      },
+      data: {
+        ...body,
+      },
+    })
 
-//     return NextResponse.json(category)
-//   } catch (error) {
-//     return NextResponse.json(
-//       { error: "Failed to update category" },
-//       { status: 500 }
-//     )
-//   }
-// }
+    return NextResponse.json(category)
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to update category" },
+      { status: 500 }
+    )
+  }
+}
 
-// export async function DELETE(
-//   request: NextRequest,
-//   { params }: { params: { id: string } }
-// ) {
-//   try {
-//     const { id } = params
+export async function DELETE(request: Request) {
+  try {
+    // Get id from URL 
+    const id = request.url.split('/').pop()
 
-//     await db.category.delete({
-//       where: {
-//         id: parseInt(id),
-//       },
-//     })
+    await db.category.delete({
+      where: {
+        id: parseInt(id!),
+      },
+    })
 
-//     return NextResponse.json({ message: "Category deleted successfully" })
-//   } catch (error) {
-//     return NextResponse.json(
-//       { error: "Failed to delete category" },
-//       { status: 500 }
-//     )
-//   }
-// }
+    return NextResponse.json({ message: "Category deleted successfully" })
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to delete category" },
+      { status: 500 }
+    )
+  }
+}
