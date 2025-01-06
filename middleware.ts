@@ -10,8 +10,10 @@ export default withAuth(
 
     // Redirect from login page if already authenticated
     if (isAuthPage) {
-      if (isAuth && isAdmin) {
-        return NextResponse.redirect(new URL('/admin', req.url))
+      if (isAuth) {
+        // Redirect admin users to admin dashboard, others to home
+        const redirectUrl = isAdmin ? '/admin' : '/'
+        return NextResponse.redirect(new URL(redirectUrl, req.url))
       }
       return null
     }
@@ -36,7 +38,7 @@ export default withAuth(
       authorized: ({ token }) => !!token
     },
     pages: {
-      signIn: '/login',
+      signIn: '/login'
     }
   }
 )
