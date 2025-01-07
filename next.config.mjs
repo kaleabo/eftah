@@ -1,7 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["media.istockphoto.com", "images.unsplash.com", "placehold.co", "plus.unsplash.com", "localhost"],
+    domains: [
+      "localhost",
+      "s3.eftahfastfood.com"
+    ],
   },
   typescript: {
     ignoreBuildErrors: true,

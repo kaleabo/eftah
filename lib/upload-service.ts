@@ -8,11 +8,11 @@ import { Readable } from "stream";
 const CONFIG = {
   MAX_FILE_SIZE: 10 * 1024 * 1024, // 10MB
   ALLOWED_EXTENSIONS: [".jpg", ".jpeg", ".png", ".webp"],
-  FTP_HOST: process.env.FTP_HOST,
-  FTP_USER: process.env.FTP_USER,
-  FTP_PASSWORD: process.env.FTP_PASSWORD,
-  FTP_UPLOAD_DIR: process.env.FTP_UPLOAD_DIR ?? "/uploads",
-  PUBLIC_URL: process.env.FTP_PUBLIC_URL ?? "https://eftahfastfood.com/uploads",
+  FTP_HOST: process.env.FTP_HOST || '',
+  FTP_USER: process.env.FTP_USER || '',
+  FTP_PASSWORD: process.env.FTP_PASSWORD || '',
+  FTP_UPLOAD_DIR: process.env.FTP_UPLOAD_DIR || '',
+  PUBLIC_URL: process.env.FTP_PUBLIC_URL || '',
 };
 
 // Function to generate a secure random filename

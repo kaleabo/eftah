@@ -3,11 +3,6 @@ import { NextResponse } from 'next/server'
 
 export default withAuth(
   function middleware(req) {
-    console.log('Middleware executing', {
-      pathname: req.nextUrl.pathname,
-      isAuth: req.nextauth.token !== null,
-      role: req.nextauth.token?.role
-    })
     const isAuth = req.nextauth.token !== null
     const isAuthPage = req.nextUrl.pathname.startsWith('/login')
     const isAdminPage = req.nextUrl.pathname.startsWith('/admin')
