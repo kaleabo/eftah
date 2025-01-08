@@ -15,7 +15,7 @@ import { Plus, Pencil, Trash2, Search } from 'lucide-react'
 import Image from 'next/image'
 import { DeleteDialog } from '@/components/admin/DeleteDialog'
 import Link from 'next/link'
-import { useToast } from '@/hooks/use-toast'
+import { toast } from 'sonner'
 import {
   Select,
   SelectContent,
@@ -52,7 +52,6 @@ export default function MenuItems() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
-  const { toast } = useToast()
 
   const { data: categories } = useQuery<Category[]>({
     queryKey: ['categories'],
@@ -83,18 +82,11 @@ export default function MenuItems() {
       const res = await fetch(`/api/menu/${id}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Failed to delete item')
       
-      toast({
-        title: 'Success',
-        description: 'Menu item deleted successfully'
-      })
+      toast.success('Menu item deleted successfully')
       refetch()
       setIsDeleteDialogOpen(false)
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to delete menu item',
-        variant: 'destructive'
-      })
+      toast.error('Failed to delete menu item')
     } finally {
       setIsDeleting(false)
     }

@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import { useToast } from '@/hooks/use-toast'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -29,20 +28,20 @@ import {
 } from '@/components/ui/select'
 import { Loader2, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+import { toast } from 'sonner'
 
 const formSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
-  price: z.string().transform((val) => parseFloat(val)),
+  price: z.coerce.number().positive('Price must be positive'),
   description: z.string().optional(),
   image: z.string().min(1, 'Image is required'),
-  categoryId: z.string().transform((val) => parseInt(val)),
+  categoryId: z.coerce.number().positive('Category is required'),
   isAvailable: z.boolean().default(true),
   isPopular: z.boolean().default(false)
 })
 
 export default function NewMenuItem() {
   const router = useRouter()
-  const { toast } = useToast()
 
   const { data: categories, isLoading: isLoadingCategories } = useQuery({
     queryKey: ['categories'],
@@ -64,19 +63,12 @@ export default function NewMenuItem() {
       return response.json()
     },
     onSuccess: () => {
-      toast({
-        title: 'Success',
-        description: 'Menu item created successfully',
-      })
+      toast.success('Menu item created successfully')
       router.push('/admin/menu')
       router.refresh()
     },
     onError: () => {
-      toast({
-        title: 'Error',
-        description: 'Something went wrong',
-        variant: 'destructive',
-      })
+      toast.error('Something went wrong')
     }
   })
 
@@ -84,10 +76,10 @@ export default function NewMenuItem() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      price: '',
+      price: 0,
       description: '',
       image: '',
-      categoryId: '',
+      categoryId: 0,
       isAvailable: true,
       isPopular: false
     }
@@ -156,6 +148,7 @@ export default function NewMenuItem() {
                           step="0.01"
                           placeholder="9.99"
                           {...field}
+                          onChange={(e) => field.onChange(e.target.valueAsNumber)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -190,8 +183,8 @@ export default function NewMenuItem() {
                     <FormLabel>Category</FormLabel>
                     <Select
                       disabled={isLoadingCategories}
-                      onValueChange={field.onChange}
-                      value={field.value}
+                      onValueChange={(value) => field.onChange(Number(value))}
+                      value={field.value ? field.value.toString() : ''}
                     >
                       <FormControl>
                         <SelectTrigger>

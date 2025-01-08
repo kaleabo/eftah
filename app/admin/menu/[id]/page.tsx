@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import React from "react";
 import {
@@ -32,6 +31,7 @@ import {
 import { Loader2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { DeleteDialog } from "@/components/admin/DeleteDialog";
+import { toast } from "sonner";
 
 interface Category {
   id: number;
@@ -67,7 +67,6 @@ const formSchema = z.object({
 export default function EditMenuItem({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = React.use(params);
   const router = useRouter();
-  const { toast } = useToast();
   const queryClient = useQueryClient();
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
 
@@ -117,6 +116,7 @@ export default function EditMenuItem({ params }: { params: Promise<{ id: string 
       });
     }
   }, [menuItem, form]);
+
   const { mutate: updateMenuItem, isPending: isUpdating } = useMutation({
     mutationFn: async (values: z.infer<typeof formSchema>) => {
       const response = await fetch(`/api/menu/${resolvedParams.id}`, {
@@ -128,19 +128,12 @@ export default function EditMenuItem({ params }: { params: Promise<{ id: string 
       return response.json();
     },
     onSuccess: () => {
-      toast({
-        title: "Success",
-        description: "Menu item updated successfully",
-      });
+      toast.success("Menu item updated successfully");
       queryClient.invalidateQueries({ queryKey: ["menuItem"] });
       router.push("/admin/menu");
     },
     onError: () => {
-      toast({
-        title: "Error",
-        description: "Something went wrong",
-        variant: "destructive",
-      });
+      toast.error("Something went wrong");
     },
   });
 
@@ -153,19 +146,12 @@ export default function EditMenuItem({ params }: { params: Promise<{ id: string 
       return response.json();
     },
     onSuccess: () => {
-      toast({
-        title: "Success",
-        description: "Menu item deleted successfully",
-      });
+      toast.success("Menu item deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["menuItem"] });
       router.push("/admin/menu");
     },
     onError: () => {
-      toast({
-        title: "Error",
-        description: "Something went wrong",
-        variant: "destructive",
-      });
+      toast.error("Something went wrong");
     },
   });
 

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Upload, X, GripVertical, ImagePlus } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 interface ImageUploadProps {
@@ -25,7 +25,6 @@ export function ImageUpload({
 }: ImageUploadProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  const { toast } = useToast();
 
   useEffect(() => {
     if (multiple && Array.isArray(value)) {
@@ -88,17 +87,10 @@ export function ImageUpload({
         onChange(uploadedUrls[0]);
       }
 
-      toast({
-        title: "Success",
-        description: "Images uploaded successfully",
-      });
+      toast.success("Images uploaded successfully");
     } catch (error) {
       console.error("Upload error:", error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to upload image",
-        variant: "destructive",
-      });
+      toast.error(error instanceof Error ? error.message : "Failed to upload image");
     } finally {
       setIsLoading(false);
       if (e.target) e.target.value = "";
@@ -109,10 +101,7 @@ export function ImageUpload({
     const newUrls = previewUrls.filter((_, index) => index !== indexToRemove);
     setPreviewUrls(newUrls);
     onChange(multiple ? newUrls : "");
-    toast({
-      title: "Image Removed",
-      description: "The image has been removed",
-    });
+    toast.success("The image has been removed");
   };
 
   const handleDragEnd = (result: any) => {
@@ -125,10 +114,7 @@ export function ImageUpload({
     setPreviewUrls(items);
     onChange(multiple ? items : items[0]);
     
-    toast({
-      title: "Images Reordered",
-      description: "The image order has been updated",
-    });
+    toast.success("The image order has been updated");
   };
 
   return (

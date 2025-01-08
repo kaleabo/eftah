@@ -3,7 +3,8 @@ const nextConfig = {
   images: {
     domains: [
       "localhost",
-      "s3.eftahfastfood.com"
+      "s3.eftahfastfood.com",
+      "nb3.nonebroker.com"
     ],
   },
   typescript: {

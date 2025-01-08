@@ -6,7 +6,6 @@ import { Button } from "./ui/button";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useToast } from "@/hooks/use-toast";
 import { toast } from "sonner";
 
 const contactFormSchema = z.object({
@@ -60,7 +59,7 @@ const ContactInformation = ({ contactInfo }: { contactInfo: ContactInfo }) => {
       });
 
       if (response.ok) {
-        toast.success("We&apos;ll get back to you as soon as possible.");
+        toast.success("We'll get back to you as soon as possible.");
         reset();
       } else {
         throw new Error("Failed to send message");

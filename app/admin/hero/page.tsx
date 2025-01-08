@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { ImageUpload } from '@/components/admin/ImageUpload'
-import { useToast } from '@/hooks/use-toast'
+import { toast } from 'sonner'
 import { Loader2 } from 'lucide-react'
 
 const formSchema = z.object({
@@ -26,8 +26,6 @@ const formSchema = z.object({
 })
 
 export default function HeroSettings() {
-  const { toast } = useToast()
-
   const { data: heroContent, refetch, isLoading } = useQuery({
     queryKey: ['hero-content'],
     queryFn: async () => {
@@ -69,17 +67,12 @@ export default function HeroSettings() {
       return res.json()
     },
     onSuccess: () => {
-      toast({
-        title: 'Success',
-        description: 'Hero content updated successfully'
-      })
+      toast.success('Hero content updated successfully')
       refetch()
     },
     onError: (error) => {
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive'
+      toast.error('Error', {
+        description: error.message
       })
     }
   })

@@ -29,9 +29,9 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
-import { useToast } from '@/hooks/use-toast'
 import { ImageUpload } from '@/components/admin/ImageUpload'
 import { Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
 
 const formSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -72,7 +72,6 @@ export function MenuItemDialog({
   onSuccess
 }: MenuItemDialogProps) {
   const [loading, setLoading] = useState(false)
-  const { toast } = useToast()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -108,17 +107,10 @@ export function MenuItemDialog({
         throw new Error('Failed to save menu item')
       }
 
-      toast({
-        title: "Success",
-        description: `Menu item ${item ? 'updated' : 'created'} successfully`
-      })
+      toast.success(`Menu item ${item ? 'updated' : 'created'} successfully`)
       onSuccess()
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Something went wrong",
-        variant: "destructive"
-      })
+      toast.error("Something went wrong")
     } finally {
       setLoading(false)
     }

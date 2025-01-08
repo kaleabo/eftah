@@ -13,7 +13,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Trash2, Mail, Loader2 } from 'lucide-react'
 import { DeleteDialog } from '@/components/admin/DeleteDialog'
-import { useToast } from '@/hooks/use-toast'
+import { toast } from 'sonner'
 import { format } from 'date-fns'
 import {
   Card,
@@ -42,7 +42,6 @@ interface Contact {
 const ITEMS_PER_PAGE_OPTIONS = [10, 25, 50, 100]
 
 export default function ContactMessages() {
-  const { toast } = useToast()
   const [deleteId, setDeleteId] = useState<number | null>(null)
   const [page, setPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
@@ -70,19 +69,12 @@ export default function ContactMessages() {
       return res.json()
     },
     onSuccess: () => {
-      toast({
-        title: 'Success',
-        description: 'Message deleted successfully'
-      })
+      toast.success('Message deleted successfully')
       refetch()
       setDeleteId(null)
     },
     onError: (error) => {
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive'
-      })
+      toast.error('Failed to delete message')
     }
   })
 
