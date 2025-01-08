@@ -8,6 +8,9 @@ import Footer from "@/components/Footer";
 import { type MenuItem } from "@/types";
 import WorkingHours from "@/components/WorkingHours";
 
+// Add revalidation to ensure page updates when data changes
+export const revalidate = 0;
+
 export default async function Home() {
   // Fetch all data in parallel for better performance
   const [heroContent, contactInfo, menuItems, hours] = await Promise.all([
