@@ -15,6 +15,9 @@ const CONFIG = {
   PUBLIC_URL: process.env.FTP_PUBLIC_URL || '',
 };
 
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 1000; // 1 second
+
 // Function to generate a secure random filename
 async function generateSecureFilename(originalFilename: string): Promise<string> {
   const fileExtension = path.extname(originalFilename);
@@ -31,6 +34,25 @@ function validateFile(file: File): void {
   const fileExtension = path.extname(file.name).toLowerCase();
   if (!CONFIG.ALLOWED_EXTENSIONS.includes(fileExtension)) {
     throw new Error("Only JPG, PNG and WebP files are allowed");
+  }
+}
+
+async function connectWithRetry(client: ftp.Client, retries = 0): Promise<void> {
+  try {
+    await client.access({
+      host: CONFIG.FTP_HOST,
+      user: CONFIG.FTP_USER,
+      password: CONFIG.FTP_PASSWORD,
+      secure: false,
+    });
+    // Test connection
+    await client.pwd();
+  } catch (error) {
+    if (retries < MAX_RETRIES) {
+      await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+      return connectWithRetry(client, retries + 1);
+    }
+    throw new Error('Failed to connect to FTP server after multiple retries. Please check your configuration.');
   }
 }
 
@@ -52,12 +74,7 @@ export async function saveFile(file: File): Promise<string> {
     client.ftp.verbose = process.env.NODE_ENV === 'development';
 
     try {
-      await client.access({
-        host: CONFIG.FTP_HOST,
-        user: CONFIG.FTP_USER,
-        password: CONFIG.FTP_PASSWORD,
-        secure: false,
-      });
+      await connectWithRetry(client);
 
       // Create a readable stream from the image buffer
       const imageStream = new Readable({
@@ -79,7 +96,7 @@ export async function saveFile(file: File): Promise<string> {
     }
   } catch (error) {
     console.error("Error in saveFile:", error);
-    throw new Error(error instanceof Error ? error.message : "Failed to save file");
+    throw new Error(error instanceof Error ? error.message : "Failed to save file. Please check FTP configuration.");
   }
 }
 
@@ -90,12 +107,7 @@ export async function deleteFile(fileUrl: string): Promise<void> {
     client.ftp.verbose = process.env.NODE_ENV === 'development';
 
     try {
-      await client.access({
-        host: CONFIG.FTP_HOST,
-        user: CONFIG.FTP_USER,
-        password: CONFIG.FTP_PASSWORD,
-        secure: false,
-      });
+      await connectWithRetry(client);
 
       const filePath = path.posix.join(CONFIG.FTP_UPLOAD_DIR, filename);
       
@@ -107,7 +119,7 @@ export async function deleteFile(fileUrl: string): Promise<void> {
     }
   } catch (error) {
     console.error("Error in deleteFile:", error);
-    throw new Error("Failed to delete file");
+    throw new Error("Failed to delete file. Please check FTP configuration.");
   }
 }
 
