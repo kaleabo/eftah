@@ -25,15 +25,6 @@ interface ContactInfo {
   phone2: string | null;
   email: string;
   mapUrl: string;
-  hours: {
-    monday: { open: string; close: string; isClosed: boolean };
-    tuesday: { open: string; close: string; isClosed: boolean };
-    wednesday: { open: string; close: string; isClosed: boolean };
-    thursday: { open: string; close: string; isClosed: boolean };
-    friday: { open: string; close: string; isClosed: boolean };
-    saturday: { open: string; close: string; isClosed: boolean };
-    sunday: { open: string; close: string; isClosed: boolean };
-  };
 }
 
 const ContactInformation = ({ contactInfo }: { contactInfo: ContactInfo }) => {

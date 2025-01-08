@@ -11,6 +11,9 @@ export const metadata: Metadata = {
     "Get in touch with Eftah Fast Food. Contact us for orders, feedback, or inquiries.",
 };
 
+// Add revalidation to ensure page updates when data changes
+export const revalidate = 0;
+
 export default async function ContactPage() {
   const contactInfo = await prisma.contactInformation.findFirst();
 

@@ -5,6 +5,9 @@ import { prisma } from "@/lib/prisma";
 import Menu from "@/components/Menu";
 import TopBar from "@/components/TopBar";
 
+// Add revalidation to ensure page updates when data changes
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: "Menu | Eftah Fast Food",
   description:

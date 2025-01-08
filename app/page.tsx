@@ -135,17 +135,6 @@ export default async function Home() {
           mapUrl: contactInfo?.mapUrl ?? "",
           phone1: contactInfo?.phone1 ?? "",
           phone2: contactInfo?.phone2 ?? "",
-          hours: Object.entries(parsedHours).reduce(
-            (acc, [day, value]) => ({
-              ...acc,
-              [day]: {
-                open: value.open ?? "",
-                close: value.close ?? "",
-                isClosed: value.isClosed ?? false,
-              },
-            }),
-            {} as typeof parsedHours
-          ),
         }}
       />
       <Footer />
